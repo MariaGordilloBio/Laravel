@@ -32,11 +32,12 @@ use Illuminate\Support\Facades\Artisan ;
 use Illuminate\Support\Facades\Auth ;
 
 Route::get('/series', 'SeriesController@index');
-  name('listar_series');
+  /*->name('listar_series'); */
 
 /*configurar rota que leva a esse form e seu método */
 Route::get('/series/criar', 'SeriesController@create');
-  name('form_criar_serie');
+  /*name('form_criar_serie'); 
+  Rotas nomeadas para facilitar manutenção e acesso*/
 
 Route::post('/series/criar', 'SeriesController@store');
 
