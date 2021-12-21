@@ -7,6 +7,7 @@ a requisição para determinadas URLs (Controller). */
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SeriesFormRequest;
 use App\Serie;
 use Illuminate\Http\Request;
 
@@ -17,11 +18,13 @@ class SeriesController extends Controller{
 da Controller */
      public function index(Request $request) {
 
-        $series = serie::query()->orderBy('nome') ->get();
+        $series = serie::query()
+            ->orderBy('nome') 
+            ->get();
 
         $mensagem = $request->session()->get('mensagem');
 
-        return view('series.index', compact('series'), 'mensagem');
+        return view('series.index', compact('series', 'mensagem'));
     }
 /* compact('series')-- função buscavar com nome que foi passado 
 retorna array no mesmo formato acima */
@@ -36,25 +39,37 @@ sem que seja necessário informar a extensão */
 
     }
 
-    public function store(Request $request)
-{
+    public function store(SeriesFormRequest $request){
+
 /*salvando uma série e exibindo-a para o próprio usuário*/
     
-    $serie= Serie::create([]);
+    $serie= Serie::create($request->all());
 
     $request->session()
-    ->flash(
+        ->flash(
 /*mensagem dura apenas durante requisição*/
-        'mensagem',
-        "Série {$serie->id} criada com sucesso {$serie->nome}"
+            'mensagem',
+            "Série {$serie->id} criada com sucesso {$serie->nome}"
         );
 
 /*usuário redirecionado*/
-    return redirect('/series');
+    return redirect()->route('listar_series');
     
     
 
-}
+    }
+
+/*função excluir série da lista */
+public function destroy(Request $request)
+    {
+        Serie::destroy($request->id);
+        $request->session()
+            ->flash(
+                'mensagem',
+                "Série removida com sucesso"
+            );
+        return redirect()->route('listar_series');
+    }
 /*requisição get
 -- pega na requisição o nome que foi enviado pelo form */
 
